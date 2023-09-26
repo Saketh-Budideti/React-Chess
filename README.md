@@ -1,1 +1,1 @@
-Creating chess site that allows users to play online game with one another using game keys
+Creating a chess site that allows users to play online games with one another using game keys
