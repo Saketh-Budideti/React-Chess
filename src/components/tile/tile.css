@@ -1,4 +1,5 @@
 .tile {
+    display:grid;
     width: 100px;
     height: 100px;
     place-content: center
@@ -29,3 +30,24 @@
     background-color: #B58862;
 }
 
+.tile-highlight:not(.chess-piece-tile)::after{
+    display:inline;
+    content: " ";
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0,0,0, 0.4);
+}
+
+.tile-highlight.chess-piece-tile::after{
+    display:inline;
+    position:absolute;
+    content: " ";
+    border-radius: 50%;
+    border: 5px solid rgba(0,0,0,0.4);
+    width: 90px;
+    height: 90px;
+    background-color: rgba(0,0,0,0);
+
+    /*radial-gradient(transparent 0%, transparent 79%, rgba(20, 85, 0, 0.3) 80%);*/
+}
