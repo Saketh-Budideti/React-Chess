@@ -1,11 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import {
-    bishopMove,
-    getPossibleBishopMoves, getPossibleKingMoves,
-    getPossibleKnightMoves,
-    getPossiblePawnMoves, getPossibleQueenMoves,
-    getPossibleRookMoves, kingMove, knightMove, pawnMove, queenMove, rookMove
-} from "../../referee/pieces";
 import {Piece, Position} from "../../models";
 import {PieceType, Sides} from "../../Types";
 import {PawnC} from "../../models/PawnC";
@@ -14,13 +7,17 @@ import {Board} from "../../models/Board";
 import Chessboard from "../chessboard/chessboard";
 
 export default function Referee(){
+    // useState used to render and update the board (beginning from a clone of the inital board)
     const [board, setBoard] = useState<Board>(initialBoard.clone());
+    // useState used to render and update the promotion pawn
     const [promotionPawn, setPromotionPawn] = useState<Piece>();
+
+    // useRef used to access the model and checkmate div element
     const modelRef = useRef<HTMLDivElement>(null);
     const checkMateModelRef = useRef<HTMLDivElement>(null);
 
 
-
+    // playMove function that takes a piece and a position and returns true if the move is valid and plays the move
     function playMove(playedPiece: Piece, destination: Position) : boolean{
         if(playedPiece.possibleMoves === undefined){
             return false;
@@ -33,7 +30,9 @@ export default function Referee(){
             return false;
         }
 
+
         let playedMoveIsValid = false;
+
 
 
         const validMove = playedPiece.possibleMoves?.some(m => m.samePosition(destination));
@@ -44,12 +43,13 @@ export default function Referee(){
 
         const enpassantable = isEnpassantable(playedPiece.position, destination, playedPiece.type, playedPiece.side);
 
+        // Creates a new board if the move is valid
         setBoard((previousBoard) => {
             const clonedBoard = board.clone();
             clonedBoard.totalTurns += 1;
             playedMoveIsValid = clonedBoard.playMove(enpassantable, destination, playedPiece, validMove);
 
-
+            // If someone won, show the checkmate model
             if(clonedBoard.winningTeam !== undefined){
                 checkMateModelRef.current?.classList.remove("hide");
             }
@@ -59,9 +59,13 @@ export default function Referee(){
 
 
 
+
+        // promotion prompts
         let pRow = (playedPiece.side === Sides.PLAYER) ? 7 : 0
         if (destination.y === pRow && playedPiece.isPawn){
             modelRef.current?.classList.remove("hide");
+            
+            // creates a new pieece to replace the pawn and places it in the correct position
             setPromotionPawn((previousPromotionPawn) => {
                 const clonedPlayedPiece = playedPiece.clone();
                 clonedPlayedPiece.position = destination.clone();
@@ -70,28 +74,6 @@ export default function Referee(){
         }
 
         return playedMoveIsValid;
-
-    }
-
-    function isValidMove(initialPos: Position, desiredPos: Position, pieceType: PieceType, side: Sides) {
-        if (desiredPos.x < 0 || desiredPos.y < 0 || desiredPos.x > 7 || desiredPos.y > 7 || desiredPos.samePosition(initialPos)) {
-            return false;
-        }
-
-        switch (pieceType) {
-            case PieceType.PAWN:
-                return pawnMove(initialPos, desiredPos, side, board.pieces);
-            case PieceType.KNIGHT:
-                return knightMove(initialPos, desiredPos, side, board.pieces);
-            case PieceType.BISHOP:
-                return bishopMove(initialPos, desiredPos, side, board.pieces);
-            case PieceType.ROOK:
-                return rookMove(initialPos, desiredPos, side, board.pieces);
-            case PieceType.QUEEN:
-                return queenMove(initialPos, desiredPos, side, board.pieces);
-            case PieceType.KING:
-                return kingMove(initialPos, desiredPos, side, board.pieces);
-        }
 
     }
 
@@ -110,6 +92,8 @@ export default function Referee(){
         return false;
     }
 
+
+    // removes the checkmate div and clones the intial board
     function restartGame() {
         checkMateModelRef.current?.classList.add("hide");
         setBoard(initialBoard.clone());
@@ -117,12 +101,13 @@ export default function Referee(){
 
 
 
-
+    // promotion handling
     function promotePawn(pieceType: PieceType){
         if(promotionPawn === undefined){
             return;
-        } // remove later
+        } 
 
+        // creates a new board with a new piece (a promoted pawn) in the correct position
         setBoard((previousBoard) => {
             const clonedBoard = board.clone()
             clonedBoard.pieces = clonedBoard.pieces.reduce((results, piece) => {
@@ -134,10 +119,12 @@ export default function Referee(){
                 return results;
             }, [] as Piece[]);
 
+            // recalculates all possible moves to ensure promoted piece displays possible moves
             clonedBoard.calculateAllMoves();
             return clonedBoard;
         })
-
+    
+        // hides the promotion model
         modelRef.current?.classList.add("hide");
     }
 

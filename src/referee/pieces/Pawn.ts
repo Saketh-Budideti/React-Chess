@@ -3,33 +3,7 @@ import {Piece, Position} from "../../models";
 import {PieceType, Sides} from "../../Types";
 import {PawnC} from "../../models/PawnC";
 
-
-export const pawnMove = (initialPos: Position, desiredPos: Position, side: Sides, boardState: Piece[]): boolean => {
-    //movement
-    const startingRow = (side === Sides.PLAYER) ? 1 : 6;
-    const direction = (side === Sides.PLAYER) ? 1 : -1;
-
-    if (initialPos.x === desiredPos.x) {
-        if (initialPos.y === startingRow && (desiredPos.y - initialPos.y) === direction * 2) {
-            if (!isOccupied(desiredPos, boardState) && (!isOccupied(new Position(desiredPos.x, desiredPos.y - direction)
-                , boardState))) {
-                return true;
-            }
-        } else if (desiredPos.y - initialPos.y === direction) {
-            if (!isOccupied(desiredPos, boardState)) {
-                return true;
-            }
-        }
-    }
-    //capture
-    else if (Math.abs(desiredPos.x - initialPos.x) === 1 && (desiredPos.y - initialPos.y) === direction) {
-        if (isOccupiedbyOpponent(desiredPos, boardState, side)) {
-            return true;
-        }
-    }
-    return false;
-}
-
+// logic to find all possible pawn moves
 export const getPossiblePawnMoves = (piece: Piece, boardState: Piece[]) : Position[] => {
 
     const possibleMoves: Position[] = [];
@@ -37,13 +11,6 @@ export const getPossiblePawnMoves = (piece: Piece, boardState: Piece[]) : Positi
     const direction = (piece.side === Sides.PLAYER) ? 1 : -1;
     const specialRow = (piece.side === Sides.PLAYER) ? 1 : 6;
 
-    // for(let i = 0; i < 8; i++){
-    //     for(let j = 0; j < 8; j++){
-    //         if(pawnMove(initialPos, {x: i, y: j}, piece.side, boardState)){
-    //             possibleMoves.push({x: i, y: j});
-    //         }
-    //     }
-    // }
 
     const normalMove = new Position(piece.position.x, piece.position.y + direction);
     const upperLeftAttack = new Position(piece.position.x - 1, piece.position.y + direction);

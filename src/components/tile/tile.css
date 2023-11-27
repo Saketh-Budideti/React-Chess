@@ -2,8 +2,7 @@
     display:grid;
     width: 100px;
     height: 100px;
-    place-content: center
-;
+    place-content: center;
 }
 
 .tile .chess-piece{

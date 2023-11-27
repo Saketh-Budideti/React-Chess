@@ -3,16 +3,8 @@ import {Piece, Position} from "../../models";
 import {Sides} from "../../Types";
 
 
-export const knightMove = (initialPos: Position, desiredPos: Position, side: Sides, boardState: Piece[]): boolean => {
-    if ((Math.abs(desiredPos.x - initialPos.x) === 1 && Math.abs(desiredPos.y - initialPos.y) === 2) ||
-        (Math.abs(desiredPos.y - initialPos.y) === 1 && Math.abs(desiredPos.x - initialPos.x) === 2)) {
-        if (isFreeOrOccByOpp(desiredPos, boardState, side)) {
-            return true;
-        }
-    }
-    return false;
-}
 
+// logic to find all possible knight moves
 export const getPossibleKnightMoves = (piece: Piece, boardState: Piece[]) : Position[] => {
 
 

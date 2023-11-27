@@ -1,6 +1,7 @@
 import {Position} from "./Position";
 import {PieceType, Sides} from "../Types";
 
+// piece class
 export class Piece {
 
     image: string;
@@ -18,37 +19,28 @@ export class Piece {
         this.hasMoved = false;
     }
 
+    // methods to check piece type
     get isPawn() : boolean{
         return this.type === PieceType.PAWN;
     }
-    get isKnight() : boolean{
-        return this.type === PieceType.KNIGHT;
-    }
-    get isBishop() : boolean{
-        return this.type === PieceType.BISHOP;
-    }
     get isRook() : boolean{
         return this.type === PieceType.ROOK;
-    }
-    get isQueen() : boolean{
-        return this.type === PieceType.QUEEN;
     }
     get isKing() : boolean{
         return this.type === PieceType.KING;
     }
 
-
-
-
+    // methods to check piece position
     samePiecePosition(otherPiece: Piece): boolean{
         return this.position.samePosition(otherPiece.position);
     }
 
+    // methods to check position
     samePosition(otherPosition: Position): boolean{
         return this.position.samePosition(otherPosition);
     }
 
-
+    // clone method for piece
     clone(): Piece {
         return new Piece(this.position.clone(), this.type, this.side, this.hasMoved, this.possibleMoves?.map(m => m.clone()));
     }

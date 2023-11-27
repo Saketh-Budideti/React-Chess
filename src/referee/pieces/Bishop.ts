@@ -2,23 +2,8 @@ import {isFreeOrOccByOpp, isOccupied, isOccupiedbyOpponent} from "./States";
 import {Piece, Position} from "../../models";
 import {Sides} from "../../Types";
 
-export const bishopMove = (initialPos: Position, desiredPos: Position, side: Sides, boardState: Piece[]) => {
-    for (let i = 1; i < 8; i++) {
-        let dirY = (initialPos.y < desiredPos.y) ? 1 : -1;
-        let dirX = (initialPos.x < desiredPos.x) ? 1 : -1;
-        let passedPosition: Position = new Position(initialPos.x + (i * dirX), initialPos.y + (i * dirY));
-        if (isFreeOrOccByOpp(passedPosition, boardState, side) && passedPosition.samePosition(desiredPos)) {
-            return true;
-        } else {
-            if (isOccupied(passedPosition, boardState)) {
-                break;
-            }
-        }
-    }
-    return false;
 
-}
-
+// logic to find all possible bishop moves
 export const getPossibleBishopMoves = (piece: Piece, boardState: Piece[]) : Position[] => {
     const possibleMoves: Position[] = [];
 

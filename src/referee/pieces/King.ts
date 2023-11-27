@@ -2,17 +2,7 @@ import {isFreeOrOccByOpp, isOccupied, isOccupiedbyOpponent} from "./States";
 import {Piece, Position} from "../../models";
 import {Sides} from "../../Types";
 
-export const kingMove = (initialPos: Position, desiredPos: Position, side: Sides, boardState: Piece[]) => {
-    let dirX = (initialPos.x > desiredPos.x) ? -1 : (initialPos.x < desiredPos.x) ? 1 : 0;
-    let dirY = (initialPos.y > desiredPos.y) ? -1 : (initialPos.y < desiredPos.y) ? 1 : 0;
-    let passedPosition: Position = new Position(initialPos.x + (dirX), initialPos.y + (dirY));
-
-    if (isFreeOrOccByOpp(passedPosition, boardState, side) && passedPosition.samePosition(desiredPos)) {
-        return true;
-    }
-    return false;
-}
-
+// logic to find all possible king moves
 export const getPossibleKingMoves = (piece: Piece, boardState: Piece[]) : Position[] => {
     const possibleMoves: Position[] = [];
 
@@ -159,6 +149,7 @@ export const getPossibleKingMoves = (piece: Piece, boardState: Piece[]) : Positi
 // needs to be fixed: king can castle in check, certain castling being prevented, if n on f2 is attaching rh1, no castling
 // add ui so that king can move two squares over and castle instead
 
+// logic to find all possible castling moves
 export const getCastlingMoves = (piece: Piece, boardState: Piece[]): Position[] => {
 
     const possibleMoves: Position[] = [];

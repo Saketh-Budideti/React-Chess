@@ -23,12 +23,15 @@ export class Board {
         this.totalTurns = totalTurns;
     }
 
+    // calculates all moves for all pieces
     calculateAllMoves() {
+
+        // calculates all possible moves for all pieces
         for (const piece of this.pieces) {
             piece.possibleMoves = this.getValidMoves(piece, this.pieces);
         }
 
-
+        // calculates castling moves for kings
         for (const king of this.pieces.filter(p => p.isKing)) {
             if (king.possibleMoves === undefined) {
                 continue;
@@ -37,27 +40,29 @@ export class Board {
             king.possibleMoves = [...king.possibleMoves, ...getCastlingMoves(king, this.pieces)];
         }
 
+        // removes illegal moves
         this.checkCurrentTeamMoves();
 
-
+        // removes all possible moves for pieces of the other team
         for (const piece of this.pieces.filter(p => p.side !== this.currentSide)) {
             piece.possibleMoves = [];
         }
 
-
+        // checks if the current team has any possible moves if not the other team wins
         if(this.pieces.filter(p => p.side === this.currentSide).some(p => p.possibleMoves !== undefined && p.possibleMoves.length > 0)){
             return;
         }
-
         this.winningTeam = (this.currentSide === Sides.PLAYER) ? Sides.OPPONENT : Sides.PLAYER;
 
 
     }
 
+    // returns the current side
     get currentSide(): Sides {
         return this.totalTurns % 2 === 0 ? Sides.OPPONENT : Sides.PLAYER;
     }
 
+    // checks all possible moves and removes the ones that put the king in check
     checkCurrentTeamMoves() {
         for (const piece of this.pieces.filter(p => p.side === this.currentSide)) {
             if (piece.possibleMoves === undefined) {
@@ -96,58 +101,7 @@ export class Board {
         }
     }
 
-    checkKingMoves() {
-        const king = this.pieces.find(p => p.isKing && p.side == this.currentSide);
-
-        if (king?.possibleMoves === undefined) {
-            return;
-        }
-
-        for (const move of king?.possibleMoves) {
-
-            const simulatedBoard = this.clone();
-
-
-            const pieceAtDestination = simulatedBoard.pieces.find(p => p.samePosition(move));
-
-            if (pieceAtDestination !== undefined) {
-                simulatedBoard.pieces = simulatedBoard.pieces.filter(p => !p.samePosition(move));
-            }
-
-            const simulatedKing = simulatedBoard.pieces.find(p => p.isKing && p.side === simulatedBoard.currentSide);
-
-            simulatedKing!.position = move;
-
-            for (const enemy of simulatedBoard.pieces.filter(p => p.side !== simulatedBoard.currentSide)) {
-                enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces);
-            }
-
-
-            let safe = true;
-
-            for (const p of simulatedBoard.pieces) {
-                if (p.side === simulatedBoard.currentSide) {
-                    continue;
-                }
-                if (p.isPawn) {
-                    const possiblePawnMoves = simulatedBoard.getValidMoves(p, simulatedBoard.pieces);
-                    if (possiblePawnMoves?.some(ppm => ppm.x !== p.position.x && ppm.samePosition(move))) {
-                        safe = false;
-                        break;
-                    }
-                } else if (p.possibleMoves?.some(p => p.samePosition(move))) {
-                    safe = false;
-                    break;
-                }
-            }
-
-            if (!safe) {
-                king.possibleMoves = king.possibleMoves?.filter(m => !m.samePosition(move))
-
-            }
-        }
-    }
-
+    // calls the correct function to get the possible moves for a piece
     getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
         switch (piece.type) {
             case PieceType.PAWN:
@@ -167,6 +121,7 @@ export class Board {
         }
     }
 
+    // returns the piece at a given position
     playMove(enpassantable: boolean, destination: Position, playedPiece: Piece, validMove: boolean): boolean {
         const direction = (playedPiece.side === Sides.PLAYER) ? 1 : -1;
         const destinationPiece = this.pieces.find(p => p.samePosition(destination));
@@ -244,6 +199,7 @@ export class Board {
         return true;
     }
 
+    // clones the board state
     clone(): Board {
         return new Board(this.pieces.map(p => p.clone()), this.totalTurns);
     }

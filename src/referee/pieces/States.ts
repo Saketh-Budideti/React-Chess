@@ -1,7 +1,7 @@
 import {Piece, Position} from "../../models";
 import {Sides} from "../../Types";
 
-
+// methods that check if squares are free or occupied by opponent
 export const isFreeOrOccByOpp = ((position: Position, boardState: Piece[], side: Sides): boolean => {
 
     return !isOccupied(position, boardState) || isOccupiedbyOpponent(position, boardState, side);
